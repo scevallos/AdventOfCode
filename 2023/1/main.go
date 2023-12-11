@@ -3,17 +3,10 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 	"unicode"
-)
-
-const (
-	sampleInput = `1abc2
-		pqr3stu8vwx
-		a1b2c3d4e5f
-		treb7uchet`
-	expectedOutput = 142
 )
 
 func main() {
@@ -27,6 +20,7 @@ func main() {
 //      then peek and dequeue
 
 func processLine(line string) int {
+	// fmt.Println("processing line:", line)
 	nums := []rune{}
 	for _, c := range line {
 		if unicode.IsDigit(c) {
@@ -41,12 +35,25 @@ func processLine(line string) int {
 	return out
 }
 
-func GetCalibrationValue(doc string) int {
-	scanner := bufio.NewScanner(strings.NewReader(sampleInput))
+func GetCalibrationValue(doc *bufio.Scanner) int {
 	lineValsSum := 0
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
+	for doc.Scan() {
+		line := strings.TrimSpace(doc.Text())
 		lineValsSum += processLine(line)
 	}
 	return lineValsSum
+}
+
+func getDocFromString(str string) *bufio.Scanner {
+	return bufio.NewScanner(strings.NewReader(str))
+}
+
+// return scanner, and closer func which should be defer called
+func getDocFromFile(filename string) (*bufio.Scanner, func() error) {
+	file, err := os.Open(filename)
+    if err != nil {
+		panic("couldn't open the file: " + err.Error())
+    }
+
+    return bufio.NewScanner(file), file.Close
 }

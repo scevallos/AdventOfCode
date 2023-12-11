@@ -6,6 +6,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const (
+	sampleInput = `1abc2
+		pqr3stu8vwx
+		a1b2c3d4e5f
+		treb7uchet`
+	expectedOutput = 142
+	submittedAnswer = 54573
+)
+
 func TestGetCalibrationValue(t *testing.T) {
 	cases := []struct {
 		name     string
@@ -16,9 +25,19 @@ func TestGetCalibrationValue(t *testing.T) {
 	}
 	for _, cs := range cases {
 		t.Run(cs.name, func(t *testing.T) {
-			assert.Equal(t, cs.expected, GetCalibrationValue(cs.doc))
+			assert.Equal(t, cs.expected, GetCalibrationValue(getDocFromString(cs.doc)))
 		})
 	}
+}
+
+func TestGetDocFromFile(t *testing.T) {
+	doc, closeFile := getDocFromFile("sampleInput.txt")
+	defer closeFile()
+	assert.Equal(t, expectedOutput, GetCalibrationValue(doc))
+
+	doc, closeFile = getDocFromFile("actualInput.txt")
+	defer closeFile()
+	assert.Equal(t, submittedAnswer, GetCalibrationValue(doc))	
 }
 
 func TestProcessLine(t *testing.T) {
