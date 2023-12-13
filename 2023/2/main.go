@@ -1,6 +1,9 @@
 package main
 
 import (
+	helpers "AdventOfCode"
+	"strings"
+
 	"bufio"
 	"fmt"
 	"regexp"
@@ -22,7 +25,7 @@ var (
 		Greens: 13,
 		Blues:  14,
 	}
-	GameFormatRegex = regexp.MustCompile(`Game (\d+):([^;]+);([^;]+);([^;]+)`)
+	GameFormatRegex = regexp.MustCompile(`Game (\d+):(.*)`)
 	TextToCubeColor = map[string]CubeColor{
 		"green": Green,
 		"red":   Red,
@@ -48,7 +51,9 @@ type Set struct {
 }
 
 func main() {
-	fmt.Println("foo2")
+	doc, closeFile := helpers.GetDocFromFile("actualInput.txt")
+	defer closeFile()
+	fmt.Println("GetSumIdsPossibleGames(actualInput.txt) =", GetSumIdsPossibleGames(doc))
 }
 
 func ParseSets(text string) []*Set {
@@ -160,37 +165,51 @@ func translateTokensToSets(tokens [][]int) []*Set {
 }
 
 func ParseLineToGame(line string) *Game {
-	matches := GameFormatRegex.FindStringSubmatch(line)
+	gameFormatMatches := GameFormatRegex.FindStringSubmatch(line)
 
-	if len(matches) <= 1 {
+	if len(gameFormatMatches) != 3 {
 		panic("No match found or bad input??")
 	}
 
-	id, err := strconv.Atoi(matches[1])
+	// get game ID
+	id, err := strconv.Atoi(gameFormatMatches[1])
 	if err != nil {
 		panic("bad game id conversion:" + err.Error())
 	}
 
-	sets := matches[2:]
+	// get game details
+	sets := gameFormatMatches[2]
 	game := &Game{
 		ID:   id,
-		Sets: make([]*Set, len(sets)),
+		Sets: ParseSets(sets),
 	}
-
-	// game.Sets = ParseSets(sets[])
 
 	return game
 }
 
 func (b *Bag) IsGamePossible(g *Game) bool {
-	return false
+	for _, set := range g.Sets {
+		if (b.Blues - set.BluesDrawn) < 0 ||
+		(b.Greens - set.GreensDrawn) < 0 ||
+		(b.Reds - set.RedsDrawn) < 0 {
+			return false
+		}
+	}
+	return true
 }
 
 func GetSumIdsPossibleGames(doc *bufio.Scanner) int {
-	// setup Bag
+	possibleGameIdsSum := 0
+	for doc.Scan() {
+		line := strings.TrimSpace(doc.Text())
+		game := ParseLineToGame(line)
+		if StartingBag.IsGamePossible(game) {
+			possibleGameIdsSum += game.ID
+		}
+	}
 	// for line in doc:
 	//    parse line into game
 	//    if Bag.IsGamePossible: sum up ID
 	// return sum
-	return -1
+	return possibleGameIdsSum
 }

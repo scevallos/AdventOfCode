@@ -24,23 +24,60 @@ func TestGetSumIdsPossibleGames(t *testing.T) {
 }
 
 func TestParseLineToGame(t *testing.T) {
-	assert.Equal(t, &Game{
-		ID: 1,
-		Sets: []*Set{
-			{
-				BluesDrawn: 3,
-				RedsDrawn:  4,
-			},
-			{
-				RedsDrawn:   1,
-				GreensDrawn: 2,
-				BluesDrawn:  6,
-			},
-			{
-				GreensDrawn: 2,
+	cases := []struct {
+		name         string
+		inputLine    string
+		expectedGame *Game
+	}{
+		{
+			name:      "first line sample input",
+			inputLine: firstLine,
+			expectedGame: &Game{
+				ID: 1,
+				Sets: []*Set{
+					{
+						BluesDrawn: 3,
+						RedsDrawn:  4,
+					},
+					{
+						RedsDrawn:   1,
+						GreensDrawn: 2,
+						BluesDrawn:  6,
+					},
+					{
+						GreensDrawn: 2,
+					},
+				},
 			},
 		},
-	}, ParseLineToGame(firstLine))
+		{
+			name:      "second line sample input",
+			inputLine: "Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue",
+			expectedGame: &Game{
+				ID: 2,
+				Sets: []*Set{
+					{
+						BluesDrawn:  1,
+						GreensDrawn: 2,
+					},
+					{
+						GreensDrawn: 3,
+						BluesDrawn:  4,
+						RedsDrawn:   1,
+					},
+					{
+						GreensDrawn: 1,
+						BluesDrawn:  1,
+					},
+				},
+			},
+		},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.expectedGame, ParseLineToGame(tc.inputLine))
+		})
+	}
 }
 
 func TestParseSets(t *testing.T) {
