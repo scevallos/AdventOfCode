@@ -53,9 +53,11 @@ type Set struct {
 func main() {
 	doc, closeFile := helpers.GetDocFromFile("actualInput.txt")
 	defer closeFile()
-	fmt.Println("GetSumIdsPossibleGames(actualInput.txt) =", GetSumIdsPossibleGames(doc))
+	// fmt.Println("GetSumIdsPossibleGames(actualInput.txt) =", GetSumIdsPossibleGames(doc))
+	fmt.Println("GetSumGamePowers(actualInput.txt) =", GetSumGamePowers(doc))
 }
 
+// returns parsedSets, minBag
 func ParseSets(text string) []*Set {
 	// fmt.Println("parsing set", text)
 	var startedParsingToken, tokenIsNumber, tokenIsText bool
@@ -187,6 +189,26 @@ func ParseLineToGame(line string) *Game {
 	return game
 }
 
+func GetMinCubesNeeded(sets []*Set) *Bag {
+	var maxReds, maxGreens, maxBlues int
+	for _, set := range sets {
+		if set.BluesDrawn > maxBlues {
+			maxBlues = set.BluesDrawn
+		}
+		if set.GreensDrawn > maxGreens {
+			maxGreens = set.GreensDrawn
+		}
+		if set.RedsDrawn > maxReds {
+			maxReds = set.RedsDrawn
+		}
+	}
+	return &Bag{
+		Reds:   maxReds,
+		Greens: maxGreens,
+		Blues:  maxBlues,
+	}
+}
+
 func (b *Bag) IsGamePossible(g *Game) bool {
 	for _, set := range g.Sets {
 		if (b.Blues - set.BluesDrawn) < 0 ||
@@ -212,4 +234,16 @@ func GetSumIdsPossibleGames(doc *bufio.Scanner) int {
 	//    if Bag.IsGamePossible: sum up ID
 	// return sum
 	return possibleGameIdsSum
+}
+
+func GetSumGamePowers(doc *bufio.Scanner) int {
+	powerGamesSum := 0
+	for doc.Scan() {
+		line := strings.TrimSpace(doc.Text())
+		game := ParseLineToGame(line)
+		minCubes := GetMinCubesNeeded(game.Sets)
+		power := minCubes.Blues * minCubes.Greens * minCubes.Reds
+		powerGamesSum += power
+	}
+	return powerGamesSum
 }
