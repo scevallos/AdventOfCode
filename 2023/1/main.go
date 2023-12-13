@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"unicode"
+
+	helpers "AdventOfCode"
 )
 
 var digitWordsRegex = []*regexp.Regexp{
@@ -34,7 +36,7 @@ var digitWordsToNums = map[string]int{
 }
 
 func main() {
-	doc, closeFile := GetDocFromFile("actualInput.txt")
+	doc, closeFile := helpers.GetDocFromFile("actualInput.txt")
 	defer closeFile()
 	fmt.Println("GetCalibrationValue(actualInput.txt) =", GetCalibrationValue(doc))
 }

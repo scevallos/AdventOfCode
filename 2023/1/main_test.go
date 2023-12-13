@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	helpers "AdventOfCode"
 )
 
 const (
@@ -26,17 +28,17 @@ func TestGetCalibrationValue(t *testing.T) {
 	}
 	for _, cs := range cases {
 		t.Run(cs.name, func(t *testing.T) {
-			assert.Equal(t, cs.expected, GetCalibrationValue(getDocFromString(cs.doc)))
+			assert.Equal(t, cs.expected, GetCalibrationValue(helpers.GetDocFromString(cs.doc)))
 		})
 	}
 }
 
 func TestGetDocFromFile(t *testing.T) {
-	doc, closeFile := GetDocFromFile("sampleInput.txt")
+	doc, closeFile := helpers.GetDocFromFile("sampleInput.txt")
 	defer closeFile()
 	assert.Equal(t, expectedOutput, GetCalibrationValue(doc))
 
-	doc, closeFile = GetDocFromFile("actualInput.txt")
+	doc, closeFile = helpers.GetDocFromFile("actualInput.txt")
 	defer closeFile()
 	assert.Equal(t, submittedAnswer2, GetCalibrationValue(doc))
 }

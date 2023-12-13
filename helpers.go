@@ -1,4 +1,4 @@
-package main
+package helpers
 
 import (
 	"bufio"
@@ -16,7 +16,7 @@ func Keys[T comparable, E any](someMap map[T]E) []T {
 	return keys
 }
 
-func getDocFromString(str string) *bufio.Scanner {
+func GetDocFromString(str string) *bufio.Scanner {
 	return bufio.NewScanner(strings.NewReader(str))
 }
 
