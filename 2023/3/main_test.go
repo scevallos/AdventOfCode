@@ -17,8 +17,16 @@ func TestProcessMatrix(t *testing.T) {
 		{'1', '.', '.', '5', '6'}, // 1 (skip 5 6)
 		{'$', '.', '5', '.', '.'}, // (skip 5)
 		// total 199
-	}))
-	
+	}, PartNumberSum))
+
+	assert.Equal(t, 3633, ProcessMatrix([][]rune{
+		{'4', '.', '.', '2', '1'}, // 21
+		{'.', '#', '.', '*', '.'}, // -
+		{'.', '.', '1', '7', '3'}, // 173
+		{'1', '.', '.', '5', '6'}, // 
+		{'$', '.', '5', '.', '.'}, // 
+		// total 3633
+	}, GearRatio))
 }
 
 func TestAbsorbNumber(t *testing.T) {
@@ -80,4 +88,11 @@ func TestGetSumAllPartNumbers(t *testing.T) {
 	doc, closeFile := helpers.GetDocFromFile("sampleInput.txt")
 	defer closeFile()
 	fmt.Println(GetSumAllPartNumbers(doc))
+}
+
+func TestGetSumAllGearRatios(t *testing.T) {
+	// % = & $ * # @ + - /
+	doc, closeFile := helpers.GetDocFromFile("sampleInput.txt")
+	defer closeFile()
+	fmt.Println(GetSumAllGearRatios(doc))
 }
