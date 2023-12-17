@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"strings"
 )
@@ -28,4 +29,17 @@ func GetDocFromFile(filename string) (*bufio.Scanner, func() error) {
 	}
 
 	return bufio.NewScanner(file), file.Close
+}
+
+func MakeRange(i, j int) []int{
+	if i > j {
+		panic(fmt.Sprintf("MakeRange(%d, %d) invalid: must have i <= j", i, j))
+	}
+	nums := make([]int, j-i)
+	index := 0
+	for a := i; a < j; a++ {
+		nums[index] = a
+		index++
+	}
+	return nums
 }
