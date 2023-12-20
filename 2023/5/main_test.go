@@ -67,7 +67,9 @@ func TestParseMapLine(t *testing.T) {
 			srcRangeStart: 2193516168,
 			rangeLength:   29269446,
 			expectedFunc: func(out map[int]int) bool {
-				return false
+				return len(out) == 29269446 &&
+				out[2193516168] == 3261136238 &&
+				out[2193516168 + 29269446 - 1] == 3261136238 + 29269446 - 1
 			},
 		},
 	}
