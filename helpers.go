@@ -106,3 +106,7 @@ func CollectNumsInLine(line string, after, until rune) []int {
 
 	return numbers
 }
+
+func IsByteDigit(input byte) bool {
+	return input >= 48 && input <= 57
+}

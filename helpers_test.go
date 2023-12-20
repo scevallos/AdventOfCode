@@ -79,6 +79,20 @@ func TestCollectNumsInLine(t *testing.T) {
 			until:    0,
 			expected: []int{1, 41, 48, 83, 86, 17, 83, 86, 6, 31, 17, 9, 48, 53},
 		},
+		{
+			name:     "no numbers",
+			line:     "seed-to-soil map:",
+			after:    0,
+			until:    0,
+			expected: []int{},
+		},
+		{
+			name:     "empty string",
+			line:     "",
+			after:    0,
+			until:    0,
+			expected: []int{},
+		},
 	}
 
 	for _, tc := range cases {
