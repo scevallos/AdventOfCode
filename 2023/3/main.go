@@ -101,7 +101,7 @@ func ProcessMatrix(matrix [][]rune, processingType int) int {
 								if alreadyFlagged {
 									continue
 								}
-	
+
 								// fmt.Printf("absorbing number from digit at %s\n", string(matrix[k][h]))
 								absorbedNum, absorbedIndices := AbsorbNumber(matrix[k], h)
 								partNumInt, err := strconv.Atoi(absorbedNum)
@@ -139,7 +139,7 @@ func ProcessMatrix(matrix [][]rune, processingType int) int {
 								if alreadyFlagged {
 									continue
 								}
-	
+
 								// fmt.Printf("absorbing number from digit at %s\n", string(matrix[k][h]))
 								absorbedNum, absorbedIndices := AbsorbNumber(matrix[k], h)
 								partNumInt, err := strconv.Atoi(absorbedNum)

@@ -1,8 +1,9 @@
 package main
 
 import (
-	helpers "AdventOfCode"
 	"testing"
+
+	helpers "AdventOfCode"
 
 	"github.com/stretchr/testify/assert"
 )

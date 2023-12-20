@@ -42,3 +42,55 @@ func TestMakeRange(t *testing.T) {
 		})
 	}
 }
+
+func TestCollectNumsInLine(t *testing.T) {
+	cases := []struct {
+		name     string
+		line     string
+		after    rune
+		until    rune
+		expected []int
+	}{
+		{
+			name:     "seeds",
+			line:     "seeds: 79 14 55 13",
+			after:    ':',
+			until:    0,
+			expected: []int{79, 14, 55, 13},
+		},
+		{
+			name:     "scratchcard",
+			line:     "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53",
+			after:    ':',
+			until:    '|',
+			expected: []int{41, 48, 83, 86, 17},
+		},
+		{
+			name:     "scratchcard no after",
+			line:     "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53",
+			after:    0,
+			until:    '|',
+			expected: []int{1, 41, 48, 83, 86, 17},
+		},
+		{
+			name:     "scratchcard no until",
+			line:     "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53",
+			after:    0,
+			until:    0,
+			expected: []int{1, 41, 48, 83, 86, 17, 83, 86, 6, 31, 17, 9, 48, 53},
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			defer func() {
+				if r := recover(); r != nil {
+					assert.Contains(t, r, "invalid: must have i <= j")
+				} else if tc.expected == nil {
+					t.Error("expected panic but didn't")
+				}
+			}()
+			assert.Equal(t, tc.expected, CollectNumsInLine(tc.line, tc.after, tc.until))
+		})
+	}
+}

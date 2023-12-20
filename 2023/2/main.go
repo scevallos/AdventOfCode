@@ -1,14 +1,14 @@
 package main
 
 import (
-	helpers "AdventOfCode"
-	"strings"
-
 	"bufio"
 	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 	"unicode"
+
+	helpers "AdventOfCode"
 )
 
 type CubeColor int
@@ -211,9 +211,9 @@ func GetMinCubesNeeded(sets []*Set) *Bag {
 
 func (b *Bag) IsGamePossible(g *Game) bool {
 	for _, set := range g.Sets {
-		if (b.Blues - set.BluesDrawn) < 0 ||
-		(b.Greens - set.GreensDrawn) < 0 ||
-		(b.Reds - set.RedsDrawn) < 0 {
+		if (b.Blues-set.BluesDrawn) < 0 ||
+			(b.Greens-set.GreensDrawn) < 0 ||
+			(b.Reds-set.RedsDrawn) < 0 {
 			return false
 		}
 	}

@@ -1,18 +1,17 @@
 package main
 
 import (
-	helpers "AdventOfCode"
 	"bufio"
 	"fmt"
 	"math"
 	"strconv"
 	"strings"
 	"unicode"
+
+	helpers "AdventOfCode"
 )
 
-var (
-	scratchCardMatches = map[int]int{}
-)
+var scratchCardMatches = map[int]int{}
 
 func main() {
 	doc, closeFile := helpers.GetDocFromFile("sampleInput.txt")
@@ -129,7 +128,7 @@ func processCard(cardNumber int) int {
 	}
 
 	sum := 0
-	for _, nextCardNumber := range helpers.MakeRange(cardNumber+1, cardNumber + matches + 1) {
+	for _, nextCardNumber := range helpers.MakeRange(cardNumber+1, cardNumber+matches+1) {
 		sum += processCard(nextCardNumber)
 	}
 

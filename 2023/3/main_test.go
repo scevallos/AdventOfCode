@@ -1,10 +1,10 @@
 package main
 
 import (
-	helpers "AdventOfCode"
 	"fmt"
-
 	"testing"
+
+	helpers "AdventOfCode"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -23,53 +23,53 @@ func TestProcessMatrix(t *testing.T) {
 		{'4', '.', '.', '2', '1'}, // 21
 		{'.', '#', '.', '*', '.'}, // -
 		{'.', '.', '1', '7', '3'}, // 173
-		{'1', '.', '.', '5', '6'}, // 
-		{'$', '.', '5', '.', '.'}, // 
+		{'1', '.', '.', '5', '6'}, //
+		{'$', '.', '5', '.', '.'}, //
 		// total 3633
 	}, GearRatio))
 }
 
 func TestAbsorbNumber(t *testing.T) {
-	cases := []struct{
-		name string
+	cases := []struct {
+		name       string
 		inputChars []rune
 		inputIndex int
-		expected string
+		expected   string
 		expIndices []int
 	}{
 		{
-			name: "1 char",
+			name:       "1 char",
 			inputChars: []rune{'1'},
 			inputIndex: 0,
-			expected: "1",
+			expected:   "1",
 			expIndices: []int{0},
 		},
 		{
-			name: "1 dot",
+			name:       "1 dot",
 			inputChars: []rune{'.'},
 			inputIndex: 0,
-			expected: "",
+			expected:   "",
 			expIndices: []int{},
 		},
 		{
-			name: "3 chars",
+			name:       "3 chars",
 			inputChars: []rune{'1', '2', '3'},
 			inputIndex: 2,
-			expected: "123",
+			expected:   "123",
 			expIndices: []int{0, 1, 2},
 		},
 		{
-			name: "first row end of first",
+			name:       "first row end of first",
 			inputChars: []rune{'4', '6', '7', '.', '.', '1', '1', '4'},
 			inputIndex: 2,
-			expected: "467",
+			expected:   "467",
 			expIndices: []int{0, 1, 2},
 		},
 		{
-			name: "first row start of last",
+			name:       "first row start of last",
 			inputChars: []rune{'4', '6', '7', '.', '.', '1', '1', '4'},
 			inputIndex: 5,
-			expected: "114",
+			expected:   "114",
 			expIndices: []int{5, 6, 7},
 		},
 	}
