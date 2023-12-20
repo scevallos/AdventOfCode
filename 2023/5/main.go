@@ -9,24 +9,15 @@ import (
 	helpers "AdventOfCode"
 )
 
-var mapNameToSequenceIndex = map[string]int{
-	"seed-to-soil map:":            0,
-	"soil-to-fertilizer map:":      1,
-	"fertilizer-to-water map:":     2,
-	"water-to-light map:":          3,
-	"light-to-temperature map:":    4,
-	"temperature-to-humidity map:": 5,
-	"humidity-to-location map:":    6,
-}
-
 func main() {
 	doc, closeFile := helpers.GetDocFromFile("sampleInput.txt")
 	defer closeFile()
 
-	// doc2, closeFile2 := helpers.GetDocFromFile("actualInput.txt")
-	// defer closeFile2()
+	doc2, closeFile2 := helpers.GetDocFromFile("actualInput.txt")
+	defer closeFile2()
 
 	fmt.Println("GetLowestLocationNumberForSeeds(sampleInput.txt) =", GetLowestLocationNumberForSeeds(doc))
+	fmt.Println("GetLowestLocationNumberForSeeds(actualInput.txt) =", GetLowestLocationNumberForSeeds(doc2))
 }
 
 // 50 98 2
@@ -92,9 +83,6 @@ func GetLowestLocationNumberForSeeds(doc *bufio.Scanner) int {
 
 	seeds, allTheMaps := parseInput(doc)
 	for _, seed := range seeds {
-		// i, j
-		// i: 0 --> 6
-		// j: 0, 1, 2
 		src := seed
 		results := []int{src}
 		for i := 0; i < len(allTheMaps); i++ {
