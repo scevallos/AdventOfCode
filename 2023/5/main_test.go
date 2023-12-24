@@ -16,6 +16,162 @@ func TestGetLowestLocationNumberForSeeds(t *testing.T) {
 	assert.Equal(t, 35, GetLowestLocationNumberForSeeds(doc))
 }
 
+func TestGetLowestLocationNumberForSeedRanges(t *testing.T) {
+	doc, closeFile := helpers.GetDocFromFile("sampleInput.txt")
+	defer closeFile()
+
+	assert.Equal(t, 46, GetLowestLocationNumberForSeedRanges(doc))
+}
+
+func TestGetOverlappingRange(t *testing.T) {
+	cases := []struct {
+		name          string
+		ijxy          []int
+		expectedRange []int
+	}{
+		{
+			name:          "right half",
+			ijxy:          []int{2, 5, 4, 7},
+			expectedRange: []int{4, 5},
+		},
+		{
+			name:          "left half",
+			ijxy:          []int{2, 5, 1, 3},
+			expectedRange: []int{2, 3},
+		},
+		{
+			name:          "bigger than",
+			ijxy:          []int{2, 5, 1, 7},
+			expectedRange: []int{2, 5},
+		},
+		{
+			name:          "smaller than",
+			ijxy:          []int{2, 5, 3, 4},
+			expectedRange: []int{3, 4},
+		},
+		{
+			name:          "no overlap",
+			ijxy:          []int{1, 5, 20, 24},
+			expectedRange: []int{-1, -1},
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			a, b := getOverlappingRange(tc.ijxy[0], tc.ijxy[1], tc.ijxy[2], tc.ijxy[3])
+			assert.Equal(t, tc.expectedRange[0], a, "start of range")
+			assert.Equal(t, tc.expectedRange[1], b, "end of range")
+		})
+	}
+}
+
+func TestProcessMap2(t *testing.T) {
+	cases := []struct {
+		name           string
+		dsts           []int
+		srcs           []int
+		rangeLengths   []int
+		seedRangeStart int
+		seedRangeLen   int
+		expected       [][2]int
+	}{
+		{
+			name: "sample seed-to-soil first seed range",
+			dsts: []int{50, 52},
+			srcs: []int{98, 50},
+			rangeLengths: []int{2, 48},
+			seedRangeStart: 79,
+			seedRangeLen:   14,
+			expected:       [][2]int{{79, 92}},
+		},
+		{
+			name: "sample seed-to-soil second seed range",
+			dsts: []int{50, 52},
+			srcs: []int{98, 50},
+			rangeLengths: []int{2, 48},
+			seedRangeStart: 55,
+			seedRangeLen:   13,
+			expected:       [][2]int{{55, 67}},
+		},
+		{
+			name: "sample soil-to-fertalizer first seed match",
+			dsts: []int{0, 37, 39},
+			srcs: []int{15, 52, 0},
+			rangeLengths: []int{37, 2, 15},
+			seedRangeStart: 79,
+			seedRangeLen:   14,
+			expected:       [][2]int{{79, 92}},
+		},
+		{
+			name: "sample fertalizer-to-water first seed match",
+			dsts: []int{49, 0, 42, 57},
+			srcs: []int{53, 11, 0, 7},
+			rangeLengths: []int{8, 42, 7, 4},
+			seedRangeStart: 79,
+			seedRangeLen:   14,
+			expected:       [][2]int{{79, 92}},
+		},
+		{
+			name: "sample water-to-light first seed match",
+			dsts: []int{88, 18},
+			srcs: []int{18, 25},
+			rangeLengths: []int{7, 70},
+			seedRangeStart: 79,
+			seedRangeLen:   14,
+			expected:       [][2]int{{79, 92}},
+		},
+		{
+			name: "sample light-to-temp first seed match",
+			dsts: []int{0, 37, 39},
+			srcs: []int{15, 52, 0},
+			rangeLengths: []int{37, 2, 15},
+			seedRangeStart: 79,
+			seedRangeLen:   14,
+			expected:       [][2]int{{79, 92}},
+		},
+		{
+			name: "sample temp-to-humid first seed match",
+			dsts: []int{0, 37, 39},
+			srcs: []int{15, 52, 0},
+			rangeLengths: []int{37, 2, 15},
+			seedRangeStart: 79,
+			seedRangeLen:   14,
+			expected:       [][2]int{{79, 92}},
+		},
+		{
+			name: "sample humid-to-loc first seed match",
+			dsts: []int{0, 37, 39},
+			srcs: []int{15, 52, 0},
+			rangeLengths: []int{37, 2, 15},
+			seedRangeStart: 79,
+			seedRangeLen:   14,
+			expected:       [][2]int{{79, 92}},
+		},
+		// {
+		// 	name:         "sample seed-to-soil third seed",
+		// 	dsts:         []int{50, 52},
+		// 	srcs:         []int{98, 50},
+		// 	rangeLengths: []int{2, 48},
+		// 	inputSrc:     55,
+		// 	expected:     57,
+		// },
+		// {
+		// 	name:         "sample seed-to-soil fourth seed",
+		// 	dsts:         []int{50, 52},
+		// 	srcs:         []int{98, 50},
+		// 	rangeLengths: []int{2, 48},
+		// 	inputSrc:     13,
+		// 	expected:     13,
+		// },
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.expected, processMap2(tc.dsts, tc.srcs, tc.rangeLengths, tc.seedRangeStart, tc.seedRangeLen))
+		})
+	}
+}
+
 func TestProcessMap(t *testing.T) {
 	cases := []struct {
 		name         string
