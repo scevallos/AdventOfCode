@@ -34,81 +34,64 @@ func processMap(dests, srcs, rangeLengths []int, source int) int {
 
 // assumption: len(dests) == len(srcs) == len(rangeLengths)
 func processMap2(dests, srcs, rangeLengths []int, seedRangeStart, seedRangeLen int) [][2]int {
-	matches := [][2]int{}
-	destRange := [2]int{}
-	minDelta := math.MaxInt
+	// fmt.Println("processMap2 called with", dests, srcs, rangeLengths, seedRangeStart, seedRangeLen)
+	destRanges := [][2]int{}
 	var delta int
+	maybePartialMatches := [][2]int{}
 	for rowNum := 0; rowNum < len(dests); rowNum++ {
 		overlapStart, overlapEnd := getOverlappingRange(srcs[rowNum], srcs[rowNum]+rangeLengths[rowNum], seedRangeStart, seedRangeStart+seedRangeLen)
 		if overlapStart == -1 && overlapEnd == -1 {
 		  continue
 		}
+		overlapSize := overlapEnd - overlapStart
 		delta = dests[rowNum] - srcs[rowNum]
-		if delta < minDelta {
-			minDelta = delta
+		// if delta < minDelta {
+		// 	minDelta = delta
+		// }
+		destRanges = append(destRanges, [2]int{overlapStart+delta, overlapSize})
+		
+		// if only partial match, grab the non-matched portion too
+		if overlapSize != seedRangeLen {
+			maybePartialMatches = append(maybePartialMatches, [2]int{seedRangeStart, seedRangeLen - overlapSize})
 		}
-		matches = append(matches, [2]int{overlapStart, overlapEnd-1})
 	}
-	if len(matches) == 0 {
-		matches = append(matches, [2]int{seedRangeStart, seedRangeStart+seedRangeLen-1})
+	if len(destRanges) == 0 {
+		destRanges = append(destRanges, [2]int{seedRangeStart, seedRangeLen})
 	}
-	for _, rangeMatch := range matches {
+	// if dest ranges doesn't cover the whole range we looked at
+	// look at partial range
 
+	destRangeLength := 0
+	for _, destRange := range destRanges {
+		destRangeLength += destRange[1]
 	}
-	return matches
+
+	// fmt.Println("maybePartials", maybePartialMatches)
+	// fmt.Println("destRanges", destRanges)
+	// fmt.Println("srcRange", seedRangeStart, seedRangeLen)
+
+	finalRanges := destRanges
+
+	if destRangeLength != seedRangeLen {
+		// destRanges = append(destRanges, maybePartialMatches...)
+		for _, partialRange := range maybePartialMatches {
+			for _, destRange := range destRanges {
+				overlapStart, overlapEnd := getOverlappingRange(partialRange[0], partialRange[0]+partialRange[1], destRange[0], destRange[0]+destRange[1])
+				if overlapStart == -1 && overlapEnd == -1 {
+					finalRanges = append(finalRanges, partialRange)
+				}
+			}
+		}
+	}
+
+
+
+	// fmt.Println("Returning destRanges", destRanges)
+	// for _, rangeMatch := range matches {
+
+	// }
+	return finalRanges
 }
-
-// starting clean
-// seeds: 79 14 55 13
-// 79+14 seed range
-
-// seed-to-soil map:
-// 50 98 2 --> no match
-// 52 50 48 --> +2, match 79+14
-
-// 79+14 => 81+14
-
-// soil-to-fertilizer map:
-// 0 15 37 --> no match
-// 37 52 2 --> no match
-// 39 0 15 --> no match
-
-// 81+14 => 81+14
-
-// fertilizer-to-water map:
-// 49 53 8 --> no match
-// 0 11 42 --> no match
-// 42 0 7 --> no match
-// 57 7 4 --> no match
-
-// 81+14 => 81+14
-
-// water-to-light map:
-// 88 18 7 --> no match
-// 18 25 70 --> -7, match 79+14
-
-// 81+14 => 74+14
-
-// light-to-temperature map:
-// 45 77 23 --> -32, match 77+14
-// 81 45 19 --> no match
-// 68 64 13 --> +4, match 74+3
-
-// 74+14 => (45+14, 78+3)
-
-// temperature-to-humidity map:
-// 0 69 1 --> no match
-// 1 0 69 --> +1, match 45+14
-
-// 45+14 => 46+14
-// 78+3 => 78+3
-
-// humidity-to-location map:
-// 60 56 37 --> +4, match 78+3
-// 56 93 4 --> no match
-
-// 46+14 => 46+14
-// 78+3 => 82+3
 
 // (2-5),(4-7) --> 4-5
 // (2-5),(1-3) --> 1-3
@@ -222,18 +205,45 @@ func GetLowestLocationNumberForSeedRanges(doc *bufio.Scanner) int {
 
 	for _, seedRangeStrtAndLen := range seedRanges {
 		seedRangeStart, seedRangeLen := seedRangeStrtAndLen[0], seedRangeStrtAndLen[1]
-		// results := []int{src}
+		lookingAtRange := [][2]int{{seedRangeStart, seedRangeLen}}
+		nextRange := lookingAtRange
+		allTheNumbersInOrder := [][2]int{}
 		for i := 0; i < len(allTheMaps); i++ {
-			nextRanges := processMap2(allTheMaps[i][0], allTheMaps[i][1], allTheMaps[i][2], seedRangeStart, seedRangeLen)
-			_ = nextRanges
-			// results = append(results, dest)
-			// src = dest
+			// fmt.Println("nextRange (before", nextRange)
+			var y int
+			var numRange [2]int
+			for y, numRange = range nextRange {
+				// TODO something weird happening here
+				// like bc iterating over lookingAtRange while changing its value 
+				// lookingAtRange := lookingAtRange
+				// fmt.Println("looking at (before)", numRange)
+				// fmt.Printf("calling processMap2(%v, %v, %v, %v, %v)\n", allTheMaps[i][0], allTheMaps[i][1], allTheMaps[i][2], numRange[0], numRange[1])
+				// aggregate into a nextRange var
+				lookingAtRange = processMap2(allTheMaps[i][0], allTheMaps[i][1], allTheMaps[i][2], numRange[0], numRange[1])
+				allTheNumbersInOrder = append(allTheNumbersInOrder, lookingAtRange...)
+				// fmt.Println("looking at (after)", lookingAtRange)
+			}
+
+			if y == 0 {
+				nextRange = lookingAtRange
+			} else {
+				nextRange = allTheNumbersInOrder[len(allTheNumbersInOrder)-y-1:]
+				// fmt.Println("y", y)
+				// fmt.Println("lookingAtRange", lookingAtRange)
+				// fmt.Println("allTheNumbersInOrder", allTheNumbersInOrder)
+			}
+			// 
+			// fmt.Println("nextRange (outside)", nextRange)
 		}
-		// fmt.Println(results)
-		// location := results[len(results)-1]
-		location := 1
-		if location < lowestLocation {
-			lowestLocation = location
+
+		// fmt.Println("allTheNumbersInOrder", allTheNumbersInOrder)
+		fmt.Println("possible locations", nextRange)
+
+		for _, locationRanges := range nextRange {
+			if locationRanges[0] < lowestLocation {
+				// fmt.Println("setting new lowest location to", locationRanges[0])
+				lowestLocation = locationRanges[0]
+			}
 		}
 	}
 

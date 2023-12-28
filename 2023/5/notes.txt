@@ -1,0 +1,52 @@
+// starting clean
+// seeds: 79 14 55 13
+// 79+14 seed range
+
+// seed-to-soil map:
+// 50 98 2 --> no match
+// 52 50 48 --> +2, match 79+14
+
+// 79+14 => 81+14
+
+// soil-to-fertilizer map:
+// 0 15 37 --> no match
+// 37 52 2 --> no match
+// 39 0 15 --> no match
+
+// 81+14 => 81+14
+
+// fertilizer-to-water map:
+// 49 53 8 --> no match
+// 0 11 42 --> no match
+// 42 0 7 --> no match
+// 57 7 4 --> no match
+
+// 81+14 => 81+14
+
+// water-to-light map:
+// 88 18 7 --> no match
+// 18 25 70 --> -7, match 81+14
+
+// 81+14 => 74+14
+
+// light-to-temperature map:
+// 45 77 23 --> -32, match 77+11
+// 81 45 19 --> no match
+// 68 64 13 --> +4, match 74+3
+
+// 74+14 => (45+11, 78+3)
+
+// temperature-to-humidity map:
+// 0 69 1 --> no match
+// 1 0 69 --> +1, match 45+11
+
+// 46+11 => 46+11
+// 78+3 => 78+3
+
+// humidity-to-location map:
+// 60 56 37 --> +4, match 78+3, match 56+1
+// 56 93 4 --> no match
+
+//  (46+10 => 46+10)
+// 56+1 => 60+1
+// 78+3 => 82+3
